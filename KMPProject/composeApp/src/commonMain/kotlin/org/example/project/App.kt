@@ -28,11 +28,13 @@ import moe.tlaster.precompose.navigation.Navigator
 import moe.tlaster.precompose.navigation.path
 import moe.tlaster.precompose.navigation.rememberNavigator
 import navigation.Navigation
+import org.koin.compose.KoinContext
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun App() {
     PreComposeApp {
+        KoinContext {
 
         val colors = getColorsTheme()
 
@@ -108,7 +110,7 @@ fun App() {
                 }
             }
         }
-
+        }
     }
 }
 
