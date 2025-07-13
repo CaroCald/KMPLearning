@@ -6,15 +6,15 @@ categoryName TEXT NOT NULL,
 description TEXT NOT NULL
 
 );
-INSERT INTO ExpenseEntity(amount,categoryName,description)
-VALUES
-(23.3, "GROCERIES", "Groceries"),
-(38.4,"SNACKS", "Snacks"),
-(43.9,"CAR","car"),
-(31.2,"HOUSE","hOUSE"),
-(33.4 ,"PARTY","FIESTA"),
-(2.3,"COFFEE","CAFE")
-;
+-- INSERT INTO ExpenseEntity(amount,categoryName,description)
+-- VALUES
+-- (23.3, "GROCERIES", "Groceries"),
+-- (38.4,"SNACKS", "Snacks"),
+-- (43.9,"CAR","car"),
+-- (31.2,"HOUSE","hOUSE"),
+-- (33.4 ,"PARTY","FIESTA"),
+-- (2.3,"COFFEE","CAFE")
+-- ;
 
 insert:
 INSERT INTO ExpenseEntity(amount,categoryName,description) VALUES (?,?,?);

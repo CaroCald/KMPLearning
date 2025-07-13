@@ -7,56 +7,91 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import model.Expense
 import moe.tlaster.precompose.viewmodel.ViewModel
+import moe.tlaster.precompose.viewmodel.viewModel
 import moe.tlaster.precompose.viewmodel.viewModelScope
 
-data class ExpensesUiState(
-    val expensesList: List<Expense> = emptyList(),
-    val total: Double = 0.0
-)
+
+
+sealed class ExpensesUiState{
+    object Loading: ExpensesUiState()
+
+    data class  Success(val expenses : List<Expense>, val total:Double) : ExpensesUiState()
+
+    data class Error(val message: String) : ExpensesUiState()
+
+}
 
 class ExpensesViewModel(private val repo: ExpenseRepository) : ViewModel() {
 
-    private val _uiState = MutableStateFlow(ExpensesUiState())
+    private val _uiState = MutableStateFlow<ExpensesUiState>(ExpensesUiState.Loading)
     val uiState = _uiState.asStateFlow()
-    private val allExpenses = repo.getAllExpenses()
+    //private val allExpenses = repo.getAllExpenses()
 
     init {
-        getAllExpenses()
+        getAllExpensesList()
     }
 
-    private fun updateState() {
-        _uiState.update { state ->
-           // println(allExpenses)
-            state.copy(
-                expensesList = allExpenses, total = allExpenses.sumOf { it.amount }
-            )
-        }
-    }
-
-    private fun getAllExpenses() {
+    private fun getAllExpensesList(){
         viewModelScope.launch {
-            updateState()
+            try {
+                val expenses = repo.getAllExpenses()
+                _uiState.value = ExpensesUiState.Success(expenses, expenses.sumOf { it.amount })
+
+            }catch (e: Exception){
+                _uiState.value = ExpensesUiState.Error(e.message ?: "")
+            }
         }
     }
+
+    private  suspend fun updateExpensesList(){
+        try {
+            val expenses = repo.getAllExpenses()
+            _uiState.value = ExpensesUiState.Success(expenses, expenses.sumOf { it.amount })
+
+        } catch (e: Exception){
+            _uiState.value = ExpensesUiState.Error(e.message ?: "")
+
+        }
+    }
+
+
+//    private fun getAllExpenses() {
+//        viewModelScope.launch {
+//            updateState()
+//        }
+//    }
 
     fun addExpenses(expense: Expense) {
         viewModelScope.launch {
-            repo.addExpense(expense)
-            updateState()
+            try {
+                repo.addExpense(expense)
+                updateExpensesList()
+            }catch (e:Exception){
+                _uiState.value = ExpensesUiState.Error(e.message ?: "")
+
+            }
 
         }
     }
 
     fun editExpense(expense: Expense) {
         viewModelScope.launch {
-            repo.editExpense(expense)
-            updateState()
+            try {
+                repo.editExpense(expense)
+                updateExpensesList()
+
+            }catch (e:Exception){
+                _uiState.value = ExpensesUiState.Error(e.message ?: "")
+
+            }
 
         }
     }
 
-    fun getExpenseWithId(id: Long): Expense {
-        return allExpenses.first { it.id == id }
+    fun getExpenseWithId(id: Long): Expense? {
+        return (_uiState.value as? ExpensesUiState.Success )?.expenses?.firstOrNull{
+            it.id == id
+        }
     }
 
 }

@@ -19,12 +19,12 @@ fun ExpensesTotalHeaderPreview() {
 @Preview(showBackground = true)
 @Composable
 fun ExpensesScreenPreview() {
-    ExpensesScreen(
-        uiState = ExpensesUiState(
-            expensesList = ExpenseManager.fakeExpenseList,
-            total = 485.3
-        ),
-        onExpenseClick = {})
+//    ExpensesScreen(
+//        uiState = ExpensesUiState(
+//            expensesList = ExpenseManager.fakeExpenseList,
+//            total = 485.3
+//        ),
+//        onExpenseClick = {})
 }
 
 @Preview(showBackground = true)
